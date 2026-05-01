@@ -4,12 +4,7 @@ set(PRJ_NAME ZornEngine)
 
 project("${PRJ_NAME}")
 
-file(GLOB_RECURSE GLFW_SRC
-    "ext/glfw/include/GLFW/*.h"
-    "ext/glfw/src/*.h"
-    "ext/glfw/src/*.c"
-    "ext/glfw/src/*.cpp"
-)
+add_subdirectory(ext/glfw)
 
 file(GLOB_RECURSE IMGUI_SRC
     # Core
@@ -39,11 +34,10 @@ add_executable(${PRJ_NAME}
 )
 
 find_package(OpenGL REQUIRED)
-
 target_link_libraries(${PRJ_NAME} PRIVATE OpenGL::GL glu32 dwmapi)
+target_link_libraries(${PRJ_NAME} PRIVATE glfw)
 
 target_include_directories(${PRJ_NAME} PRIVATE src)
-target_include_directories(${PRJ_NAME} PRIVATE ext/glfw/src ext/glfw/include)
 target_include_directories(${PRJ_NAME} PRIVATE ext/imgui ext/imgui/backends)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

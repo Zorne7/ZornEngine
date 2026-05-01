@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 #include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GLFW/glfw3.h>
 
 struct Color
 {
@@ -25,16 +24,11 @@ public:
 
 private:
     void CreateTexture();
-    void CreateWindowAndContext(const std::string &title);
-    void DestroyWindowAndContext();
     void RenderLoop(const std::string &title);
 
     int height, width;
     std::vector<Color> pixels;
     GLuint texture;
 
-    // Win32
-    HWND hwnd;
-    HDC hdc;
-    HGLRC glrc;
+    GLFWwindow* window;
 };
