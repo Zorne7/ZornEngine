@@ -1,45 +1,50 @@
-﻿cmake_minimum_required (VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 
 set(PRJ_NAME ZornEngine)
+project(${PRJ_NAME})
 
-project("${PRJ_NAME}")
+# ------------ External libraries ------------
 
+# GLFW
 add_subdirectory(ext/glfw)
 
-file(GLOB_RECURSE IMGUI_SRC
-    # Core
-    "ext/imgui/imgui.cpp"
-    "ext/imgui/imgui_draw.cpp"
-    "ext/imgui/imgui_tables.cpp"
-    "ext/imgui/imgui_widgets.cpp"
-    "ext/imgui/imgui_demo.cpp"
-    # Backend
-    "ext/imgui/backends/imgui_impl_glfw.cpp"
-    "ext/imgui/backends/imgui_impl_opengl3.cpp"
+# ImGui
+set(IMGUI_SRC
+    ext/imgui/imgui.cpp
+    ext/imgui/imgui_draw.cpp
+    ext/imgui/imgui_tables.cpp
+    ext/imgui/imgui_widgets.cpp
+    ext/imgui/imgui_demo.cpp
+
+    ext/imgui/backends/imgui_impl_glfw.cpp
+    ext/imgui/backends/imgui_impl_opengl3.cpp
 )
+
+add_library(imgui ${IMGUI_SRC})
+target_include_directories(imgui PUBLIC
+    ext/imgui
+    ext/imgui/backends
+    ext/glfw/include
+)
+
+# ------------ Project Sources ------------
 
 file(GLOB_RECURSE PRJ_SRC
-    "src/*.h"
-    "src/*.c"
     "src/*.cpp"
+    "src/*.h"
 )
 
-add_executable(${PRJ_NAME}
+add_executable(${PRJ_NAME} ${PRJ_SRC})
 
-    ${PRJ_SRC}
+set_property(TARGET ${PRJ_NAME} PROPERTY CXX_STANDARD 20)
 
-    ${GLFW_SRC}
-
-    ${IMGUI_SRC}
-)
+# ------------ Linked Libraries ------------
 
 find_package(OpenGL REQUIRED)
-target_link_libraries(${PRJ_NAME} PRIVATE OpenGL::GL glu32 dwmapi)
-target_link_libraries(${PRJ_NAME} PRIVATE glfw)
 
-target_include_directories(${PRJ_NAME} PRIVATE src)
-target_include_directories(${PRJ_NAME} PRIVATE ext/imgui ext/imgui/backends)
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET ${PRJ_NAME} PROPERTY CXX_STANDARD 20)
-endif()
+target_link_libraries(${PRJ_NAME}
+    PRIVATE
+        glfw
+        imgui
+        OpenGL::GL
+)
