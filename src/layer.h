@@ -14,6 +14,9 @@ public:
     virtual void OnUpdate() {}
     virtual void OnImGuiRender() {}
 
+    virtual void Begin() {}
+    virtual void End() {}
+
     const std::string& GetName() const { return m_Name; }
 
 protected:
