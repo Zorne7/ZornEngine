@@ -32,20 +32,30 @@ void Application::Shutdown()
     delete m_Window;
 }
 
+void Application::PushLayer(Layer* layer)
+{
+    m_Layers.push_back(layer);
+    layer->OnAttach();
+}
+
 void Application::Run()
 {
     while (!m_Window->ShouldClose()) {
         m_Window->PollEvents();
 
+        // Update layers
+        for (Layer* layer : m_Layers) {
+            layer->OnUpdate();
+        }
+
+        // ImGui
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // --- UI ---
-        ImGui::Begin("ZornEngine");
-        ImGui::Text("Engine running!");
-        ImGui::End();
-        // -----------
+        for (Layer* layer : m_Layers) {
+            layer->OnImGuiRender();
+        }
 
         ImGui::Render();
         glClear(GL_COLOR_BUFFER_BIT);
