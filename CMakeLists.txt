@@ -27,6 +27,14 @@ target_include_directories(imgui PUBLIC
     ext/glfw/include
 )
 
+# Glad
+file(GLOB_RECURSE GLAD_SRC
+    ext/glad/*.c
+    ext/glad/*.h
+)
+
+add_library(glad ${GLAD_SRC})
+
 # ------------ Project Sources ------------
 
 file(GLOB_RECURSE PRJ_SRC
@@ -35,6 +43,8 @@ file(GLOB_RECURSE PRJ_SRC
 )
 
 add_executable(${PRJ_NAME} ${PRJ_SRC})
+
+target_include_directories(${PRJ_NAME} PUBLIC ext)
 
 set_property(TARGET ${PRJ_NAME} PROPERTY CXX_STANDARD 20)
 
@@ -46,5 +56,6 @@ target_link_libraries(${PRJ_NAME}
     PRIVATE
         glfw
         imgui
+        glad
         OpenGL::GL
 )
