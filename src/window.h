@@ -5,7 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-class Window {
+class Window
+{
 public:
     Window(int width, int height, const std::string& title);
     ~Window();

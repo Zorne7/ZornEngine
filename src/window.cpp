@@ -7,11 +7,13 @@ Window::Window(int width, int height, const std::string& title)
     Init(width, height, title);
 }
 
-Window::~Window() {
+Window::~Window()
+{
     Shutdown();
 }
 
-void Window::Init(int width, int height, const std::string& title) {
+void Window::Init(int width, int height, const std::string& title)
+{
     if (!glfwInit())
         throw std::runtime_error("Failed to initialize GLFW");
 
@@ -41,19 +43,23 @@ void Window::Init(int width, int height, const std::string& title) {
     });
 }
 
-void Window::Shutdown() {
+void Window::Shutdown()
+{
     glfwDestroyWindow(m_Window);
     glfwTerminate();
 }
 
-void Window::PollEvents() {
+void Window::PollEvents()
+{
     glfwPollEvents();
 }
 
-void Window::SwapBuffers() {
+void Window::SwapBuffers()
+{
     glfwSwapBuffers(m_Window);
 }
 
-bool Window::ShouldClose() const {
+bool Window::ShouldClose() const
+{
     return glfwWindowShouldClose(m_Window);
 }
