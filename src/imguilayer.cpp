@@ -5,55 +5,51 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-#define IMGUI_DOCKING 1
-
 ImGuiLayer::ImGuiLayer(Window* window)
     : Layer("ImGuiLayer"), m_Window(window) {}
 
 ImGuiLayer::~ImGuiLayer() {}
 
-void ImGuiLayer::OnAttach() {
+void ImGuiLayer::OnAttach()
+{
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-
-#if IMGUI_DOCKING
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-#endif
 
     ImGui::StyleColorsDark();
 
-#if IMGUI_DOCKING
-    // Fix per finestre native multiple
+    // Fix for multiple native windows
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0.0f;
     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-#endif
 
     ImGui_ImplGlfw_InitForOpenGL(m_Window->GetNativeWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
 }
 
-void ImGuiLayer::OnDetach() {
+void ImGuiLayer::OnDetach()
+{
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
-void ImGuiLayer::Begin() {
+void ImGuiLayer::Begin()
+{
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 }
 
-void ImGuiLayer::End() {
+void ImGuiLayer::End()
+{
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-#if IMGUI_DOCKING
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         GLFWwindow* backup = glfwGetCurrentContext();
@@ -61,12 +57,10 @@ void ImGuiLayer::End() {
         ImGui::RenderPlatformWindowsDefault();
         glfwMakeContextCurrent(backup);
     }
-#endif
 }
 
-void ImGuiLayer::OnImGuiRender() {
-
-#if IMGUI_DOCKING
+void ImGuiLayer::OnImGuiRender()
+{
     static bool dockspaceOpen = true;
 
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -90,5 +84,4 @@ void ImGuiLayer::OnImGuiRender() {
     ImGui::DockSpace(dockspaceID, ImVec2(0, 0));
 
     ImGui::End();
-#endif
 }
