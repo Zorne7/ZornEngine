@@ -5,7 +5,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-#define IMGUI_DOCKING 0
+#define IMGUI_DOCKING 1
 
 ImGuiLayer::ImGuiLayer(Window* window)
     : Layer("ImGuiLayer"), m_Window(window) {}
