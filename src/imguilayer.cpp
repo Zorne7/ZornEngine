@@ -2,6 +2,7 @@
 #include "window.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
@@ -17,8 +18,8 @@ void ImGuiLayer::OnAttach()
 
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Disabled for fixed layout
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Disabled to keep windows inside main window
 
     ImGui::StyleColorsDark();
 
@@ -26,10 +27,10 @@ void ImGuiLayer::OnAttach()
     ImGui_ImplOpenGL3_Init("#version 330");
 
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+    // if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    //     style.WindowRounding = 0.0f;
+    //     style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    // }
 }
 
 void ImGuiLayer::OnDetach()
@@ -52,12 +53,12 @@ void ImGuiLayer::End()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        GLFWwindow* backup = glfwGetCurrentContext();
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-        glfwMakeContextCurrent(backup);
-    }
+    // if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    //     GLFWwindow* backup = glfwGetCurrentContext();
+    //     ImGui::UpdatePlatformWindows();
+    //     ImGui::RenderPlatformWindowsDefault();
+    //     glfwMakeContextCurrent(backup);
+    // }
 }
 
 void ImGuiLayer::OnImGuiRender()
@@ -79,10 +80,31 @@ void ImGuiLayer::OnImGuiRender()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
     ImGui::Begin("DockSpace", &dockspaceOpen, windowFlags);
-    ImGui::PopStyleVar(2);
+
+    if (!m_DockspaceInitialized) {
+        m_DockspaceInitialized = true;
+        // Fixed layout, no docking
+    }
+
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Exit")) {
+                glfwSetWindowShouldClose(m_Window->GetNativeWindow(), true);
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("View")) {
+            ImGui::MenuItem("Hierarchy", nullptr);
+            ImGui::MenuItem("Inspector", nullptr);
+            ImGui::MenuItem("Scene Settings", nullptr);
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
 
     ImGuiID dockspaceID = ImGui::GetID("MyDockSpace");
-    ImGui::DockSpace(dockspaceID, ImVec2(0, 0));
+    // ImGui::DockSpace(dockspaceID, ImVec2(0, 0)); // Disabled for fixed layout
 
     ImGui::End();
+    ImGui::PopStyleVar(2);
 }

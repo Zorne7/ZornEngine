@@ -19,7 +19,11 @@ public:
     virtual void End() override;
 
 private:
+    void SetupDockspaceLayout();
+
+private:
     Window* m_Window;
+    bool m_DockspaceInitialized = false;
 };
 
 

@@ -19,7 +19,7 @@ Application::Application()
     floor.GetTransform().Scale = Math::Vec3(5.0f, 0.1f, 5.0f);
     floor.GetRenderComponent().Color = Math::Vec3(0.4f, 0.4f, 0.4f);
 
-    PushLayer(new RendererLayer(m_Scene));
+    PushLayer(new RendererLayer(m_Scene, m_Window));
     PushLayer(new SceneEditorLayer(m_Scene));
     PushLayer(m_imGuiLayer);
 }

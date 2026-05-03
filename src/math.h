@@ -14,6 +14,20 @@ namespace Math {
         Vec3() = default;
         Vec3(float value) : x(value), y(value), z(value) {}
         Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+
+        Vec3& operator+=(const Vec3& other) {
+            x += other.x;
+            y += other.y;
+            z += other.z;
+            return *this;
+        }
+
+        Vec3& operator-=(const Vec3& other) {
+            x -= other.x;
+            y -= other.y;
+            z -= other.z;
+            return *this;
+        }
     };
 
     inline Vec3 operator+(const Vec3& a, const Vec3& b) {

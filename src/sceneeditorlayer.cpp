@@ -11,18 +11,20 @@ SceneEditorLayer::SceneEditorLayer(Scene* scene)
 
 void SceneEditorLayer::OnAttach()
 {
-    m_NameBuffer.reserve(128);
 }
 
 void SceneEditorLayer::OnImGuiRender()
 {
     DrawHierarchyPanel();
     DrawInspectorPanel();
+    DrawSettingsPanel();
 }
 
 void SceneEditorLayer::DrawHierarchyPanel()
 {
-    ImGui::Begin("Hierarchy");
+    ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(200, ImGui::GetIO().DisplaySize.y - 20), ImGuiCond_Always);
+    ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
     if (ImGui::Button("Create Entity")) {
         Entity& entity = m_Scene->CreateEntity("New Entity");
@@ -46,7 +48,9 @@ void SceneEditorLayer::DrawHierarchyPanel()
 
 void SceneEditorLayer::DrawInspectorPanel()
 {
-    ImGui::Begin("Inspector");
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 300, 20), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(300, (ImGui::GetIO().DisplaySize.y - 20) * 0.6f), ImGuiCond_Always);
+    ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
     Entity* entity = m_Scene->GetSelectedEntity();
     if (!entity) {
@@ -76,6 +80,38 @@ void SceneEditorLayer::DrawInspectorPanel()
     if (ImGui::Button("Delete Entity")) {
         m_Scene->DeleteSelectedEntity();
     }
+
+    ImGui::End();
+}
+
+void SceneEditorLayer::DrawSettingsPanel()
+{
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 300, 20 + (ImGui::GetIO().DisplaySize.y - 20) * 0.6f), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(300, (ImGui::GetIO().DisplaySize.y - 20) * 0.4f), ImGuiCond_Always);
+    ImGui::Begin("Scene Settings", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+
+    ImGui::Text("Scene summary");
+    ImGui::Separator();
+    ImGui::Text("Entity count: %d", m_Scene->GetEntityCount());
+
+    Entity* selected = m_Scene->GetSelectedEntity();
+    if (selected) {
+        ImGui::Text("Selected: %s", selected->GetName().c_str());
+    } else {
+        ImGui::TextDisabled("No entity selected.");
+    }
+
+    ImGui::Separator();
+    ImGui::Text("Navigation controls");
+    ImGui::BulletText("Right click + drag: orbit camera");
+    ImGui::BulletText("W/A/S/D: move target");
+    ImGui::BulletText("Q/E: down/up");
+    ImGui::BulletText("Z/X: zoom in/out");
+    ImGui::BulletText("Left click in viewport: cycle entity selection");
+
+    ImGui::Separator();
+    ImGui::Text("Editor tips");
+    ImGui::TextWrapped("Use the hierarchy panel to select entities, then adjust position, rotation, scale and color in the inspector.");
 
     ImGui::End();
 }

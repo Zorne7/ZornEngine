@@ -2,7 +2,6 @@
 #define SCENEEDITORLAYER_H
 
 #include "layer.h"
-#include <string>
 
 class Scene;
 
@@ -18,10 +17,10 @@ public:
 private:
     void DrawHierarchyPanel();
     void DrawInspectorPanel();
+    void DrawSettingsPanel();
 
 private:
     Scene* m_Scene;
-    std::string m_NameBuffer;
 };
 
 #endif // SCENEEDITORLAYER_H
