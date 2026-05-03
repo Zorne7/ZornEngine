@@ -1,6 +1,7 @@
 #include "renderlayer.h"
 #include "imgui.h"
 #include <glad/glad.h>
+#include <iostream>
 
 RendererLayer::RendererLayer()
     : Layer("RendererLayer")
@@ -28,6 +29,10 @@ void RendererLayer::OnAttach()
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RBO);
 
+    // Check completeness
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Framebuffer incomplete!" << std::endl;
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -51,18 +56,22 @@ void RendererLayer::OnDetach()
 
 void RendererLayer::ResizeFramebuffer(int width, int height)
 {
-    if (width <= 0 || height <= 0){
+    if (width <= 0 || height <= 0) {
         return;
     }
 
     m_Width = width;
     m_Height = height;
 
+    glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
+
     glBindTexture(GL_TEXTURE_2D, m_Texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_Width, m_Height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
     glBindRenderbuffer(GL_RENDERBUFFER, m_RBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RendererLayer::OnUpdate()
@@ -83,7 +92,7 @@ void RendererLayer::OnImGuiRender()
     ImGui::Begin("Viewport");
 
     ImVec2 size = ImGui::GetContentRegionAvail();
-    if ((int)size.x != m_Width || (int)size.y != m_Height){
+    if ((int)size.x != m_Width || (int)size.y != m_Height) {
         ResizeFramebuffer((int)size.x, (int)size.y);
     }
 

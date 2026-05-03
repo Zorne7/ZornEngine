@@ -22,13 +22,14 @@ void ImGuiLayer::OnAttach()
 
     ImGui::StyleColorsDark();
 
-    // Fix for multiple native windows
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.WindowRounding = 0.0f;
-    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-
     ImGui_ImplGlfw_InitForOpenGL(m_Window->GetNativeWindow(), true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 }
 
 void ImGuiLayer::OnDetach()
