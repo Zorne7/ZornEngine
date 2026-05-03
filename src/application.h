@@ -5,6 +5,8 @@
 #include "layer.h"
 #include <vector>
 
+class ImGuiLayer;
+
 class Application
 {
 public:
@@ -15,13 +17,11 @@ public:
     void PushLayer(Layer* layer);
 
 private:
-    void Init();
-    void Shutdown();
-
-private:
     Window* m_Window;
     bool m_Running = true;
 
+    ImGuiLayer *m_imGuiLayer;
     std::vector<Layer*> m_Layers;
 };
+
 #endif // APPLICATION_H
